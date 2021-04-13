@@ -1,1 +1,1 @@
-# Invoke-Stealth
+<p align="center"><img width=650 alt="Invoke-Stealth" src="https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Design/Invoke-Stealth.png"></p>
