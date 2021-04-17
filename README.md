@@ -1,4 +1,4 @@
-<p align="center"><img width=600 alt="Invoke-Stealth" src="https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Design/Invoke-Stealth.png"></p>
+<p align="center"><img width=650 alt="Invoke-Stealth" src="https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Design/Invoke-Stealth.png"></p>
 
 **Invoke-Stealth** is a Simple & Powerful PowerShell Script Obfuscator.
 
