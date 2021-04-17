@@ -6,10 +6,10 @@
 # Variables
 $ErrorActionPreference = "SilentlyContinue"
 $InvokePath="$pwd/$($args[0])"
+$Paramt=$($args[1])
 $Technique=$($args[2])
 
 # Banner
-Write-Host
 Write-host "  ___                 _             ____  _             _ _   _      " -ForegroundColor Blue
 Write-host " |_ _|_ _ __   _ ___ | | _ ___     / ___|| |_ ___  __ _| | |_| |__   " -ForegroundColor Blue
 Write-host "  | || '_ \ \ / / _ \| |/ / _ \____\___ \| __/ _ \/ _' | | __| '_ \  " -ForegroundColor Blue
@@ -20,25 +20,26 @@ Write-host "  ------------------------- by @JoelGMSec ------------------------- 
 
 # Help
 function Show-Help {
-Write-host ; Write-Host "Info: " -ForegroundColor Yellow -NoNewLine ; Write-Host " This tool helps you to automate the obfuscation process of"
-Write-Host "       any script written in PowerShell with different techniques"
-Write-Host ; Write-Host "Usage: " -ForegroundColor Yellow -NoNewLine ; Write-Host ".\Invoke-Stealth.ps1 script.ps1 -technique Xencrypt" -ForegroundColor Blue 
-Write-Host "         - You can use as single or separated by commas -" ; Write-Host ; Write-Host "Techniques: " -ForegroundColor Yellow 
+Write-host ; Write-Host " Info: " -ForegroundColor Yellow -NoNewLine ; Write-Host " This tool helps you to automate the obfuscation process of"
+Write-Host "        any script written in PowerShell with different techniques"
+Write-Host ; Write-Host " Usage: " -ForegroundColor Yellow -NoNewLine ; Write-Host ".\Invoke-Stealth.ps1 script.ps1 -technique Chimera" -ForegroundColor Blue 
+Write-Host "         - You can use as single or separated by commas -" ; Write-Host ; Write-Host " Techniques: " -ForegroundColor Yellow 
 Write-Host "       · " -NoNewLine ; Write-Host "Chimera: "-ForegroundColor Green -NoNewLine ; Write-Host "Substitute strings and concatenate variables"
-Write-Host "       · " -NoNewLine ; Write-Host "Xencrypt: "-ForegroundColor Green -NoNewLine ; Write-Host "Compresses and encrypts with random iterations"
+Write-Host "       · " -NoNewLine ; Write-Host "BetterXencrypt: "-ForegroundColor Green -NoNewLine ; Write-Host "Compresses and encrypts with random iterations"
 Write-Host "       · " -NoNewLine ; Write-Host "PyFuscation: "-ForegroundColor Green -NoNewLine ; Write-Host "Obfuscate functions, variables and parameters"
 Write-Host "       · " -NoNewLine ; Write-Host "PSObfuscation: "-ForegroundColor Green -NoNewLine ; Write-Host "Convert content to bytes and compress with Gzip"
 Write-Host "       · " -NoNewLine ; Write-Host "ReverseB64: "-ForegroundColor Green -NoNewLine ; Write-Host "Encode with base64 and reverse it to avoid detections"
 Write-Host "       · " -NoNewLine ; Write-Host "All: "-ForegroundColor Green -NoNewLine ; Write-Host "Sequentially executes all techniques described above"
-Write-Host ; Write-Host "Warning: " -ForegroundColor Red -NoNewLine  ; Write-Host "The output script will exponentially multiply the original size"
-Write-Host "         " -NoNewLine ; Write-Host "Chimera & PyFuscation need dependencies to work properly in Windows" ; Write-Host }
+Write-Host ; Write-Host " Warning: " -ForegroundColor Red -NoNewLine  ; Write-Host "The output script will exponentially multiply the original size"
+Write-Host "         " -NoNewLine ; Write-Host " Chimera & PyFuscation need dependencies to work properly in Windows" ; Write-Host }
 
-if($InvokePath -like '*-help') { Show-Help ; break }
+if($InvokePath -like '*-h*') { Show-Help ; break }
 if(!$args) { Write-Host ; Write-Host "Error: No input file!" -ForegroundColor Red ; Show-Help ; break }
+if($Paramt -notlike '-t*') { Write-Host ; Write-Host "Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
 if(!$Technique) { Write-Host ; Write-Host "Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
 
 # Main
-else { Write-host ; $RandomNumber = Get-Random (10..25)
+Write-host ; $RandomNumber = Get-Random (10..25)
 $checkpath = Get-ChildItem $pwd\Resources ; if ($? -eq $true){ $local = "True" ; Get-ChildItem -Path $pwd -Recurse | Unblock-File }
 
 function Test-Command {
@@ -57,12 +58,12 @@ $Chimera = ls *chimera* ; Clear-Content $InvokePath ; Add-Content $InvokePath $(
 del $Chimera -ErrorAction SilentlyContinue ; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
 else { Write-Host "[!] Bash is not installed! Chimera will not load due to failed dependencies.." -ForegroundColor Red ; Write-Host }}
 
-function Load-Xencrypt {
-Write-Host "[+] Loading Xencrypt and doing some encryption with $RandomNumber iterations.. " -ForegroundColor Blue -NoNewline
-if ($local){ Import-Module $pwd\Resources\Xencrypt\Xencrypt.ps1 -Force } else {
-(New-object System.net.webclient).DownloadFile("https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Resources/Xencrypt/Xencrypt.ps1","$pwd/Xencrypt.ps1")
-Import-Module $pwd\Xencrypt.ps1 -Force } ; Invoke-Xencrypt -InFile $InvokePath -OutFile $InvokePath -Iterations $RandomNumber 2>&1> $null
-Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del Xencrypt.ps1 -ErrorAction SilentlyContinue }
+function Load-BetterXencrypt {
+Write-Host "[+] Loading BetterXencrypt and doing some encryption with $RandomNumber iterations.. " -ForegroundColor Blue -NoNewline
+if ($local){ Import-Module $pwd\Resources\BetterXencrypt\BetterXencrypt.ps1 -Force } else {
+(New-object System.net.webclient).DownloadFile("https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Resources/BetterXencrypt/BetterXencrypt.ps1","$pwd/BetterXencrypt.ps1")
+Import-Module $pwd\BetterXencrypt.ps1 -Force } ; Invoke-BetterXencrypt -InFile $InvokePath -OutFile $InvokePath -Iterations $RandomNumber 2>&1> $null
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del BetterXencrypt.ps1 -ErrorAction SilentlyContinue }
 
 function Load-PyFuscation {
 $TestPyFuscation = Test-Command python3 ; if($TestPyFuscation -in 'True'){ 
@@ -93,10 +94,10 @@ Add-Content $InvokePath '$LoadCode = [System.Text.Encoding]::UTF8.GetString([Sys
 Add-Content $InvokePath 'Invoke-Expression $LoadCode' ; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
 
 if($Technique -like '*Chimera*') { Load-Chimera }
-if($Technique -like '*Xencrypt*') { Load-Xencrypt }
+if($Technique -like '*BetterXencrypt*') { Load-BetterXencrypt }
 if($Technique -like '*PyFuscation*') { Load-PyFuscation }
 if($Technique -like '*PSObfuscation*') { Load-PSObfuscation }
 if($Technique -like '*ReverseB64*') { Rev64-Encoder }
-if($Technique -in 'All') { Load-Chimera ; Load-Xencrypt ; Load-PyFuscation ; Load-PSObfuscation ; Rev64-Encoder }
+if($Technique -in 'All') { Load-Chimera ; Load-BetterXencrypt ; Load-PyFuscation ; Load-PSObfuscation ; Rev64-Encoder }
 
-Write-Host "[+] Done! " -ForegroundColor Green ; Write-Host }
+Write-Host "[+] Done! " -ForegroundColor Green ; Write-Host

@@ -1,8 +1,9 @@
-<p align="center"><img width=650 alt="Invoke-Stealth" src="https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Design/Invoke-Stealth.png"></p>
+<p align="center"><img width=600 alt="Invoke-Stealth" src="https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Design/Invoke-Stealth.png"></p>
 
 **Invoke-Stealth** is a Simple & Powerful PowerShell Script Obfuscator.
 
 This tool helps you to automate the obfuscation process of any script written in PowerShell with different techniques. You can use any of them separately, together or all of them sequentially with ease, from Windows or Linux.
+
 
 # Requirements
 - Powershell 4.0 or higher
@@ -10,6 +11,7 @@ This tool helps you to automate the obfuscation process of any script written in
 - Python 3*
 
 *Required to use all features
+
 
 # Download
 It is recommended to clone the complete repository or download the zip file.
@@ -23,9 +25,10 @@ You can also download the limited version as follows:
 powershell iwr -useb https://darkbyte.net/invoke-stealth.php -outfile Invoke-Stealth.ps1
 ```
 
+
 # Usage
 ```
-.\Invoke-Stealth.ps1 --help
+.\Invoke-Stealth.ps1 -help
 
 Info:  This tool helps you to automate the obfuscation process of
        any script written in PowerShell with different techniques
@@ -49,28 +52,32 @@ Warning: The output script will exponentially multiply the original size
 
 https://darkbyte.net/ofuscando-scripts-de-powershell-con-invoke-stealth
 
+
 # License
 This project is licensed under the GNU 3.0 license - see the LICENSE file for more details.
 
+
 # Credits and Acknowledgments
-This framework has been created and designed from scratch by Joel Gámez Molina // @JoelGMSec
+This script has been created and designed from scratch by Joel Gámez Molina // @JoelGMSec
 
 Some modules use third-party code, scripts, and tools, particularly:
 
 • **Chimera** by *tokyoneon* --> https://github.com/tokyoneon/Chimera
 
-• **Xencrypt** by *the-xentropy* --> https://github.com/the-xentropy/xencrypt
+• **BetterXencrypt** by *GetRektBoy724* --> https://github.com/GetRektBoy724/BetterXencrypt
 
 • **PyFuscation** by *CBHue* --> https://github.com/CBHue/PyFuscation
 
 • **PSObfuscation** by *gh0x0st* --> https://github.com/gh0x0st/Invoke-PSObfuscation
+
 
 # Contact
 This software does not offer any kind of guarantee. Its use is exclusive for educational environments and / or security audits with the corresponding consent of the client. I am not responsible for its misuse or for any possible damage caused by it.
 
 For more information, you can contact through info@darkbyte.net
 
+
 # Support
 You can support my work buying me a coffee:
 
-[<img img width=250 alt="buymeacoffe" src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png">](https://www.buymeacoffee.com/joelgmsec)
+[<img width=250 alt="buymeacoffe" src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png">](https://www.buymeacoffee.com/joelgmsec)
