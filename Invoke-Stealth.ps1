@@ -5,7 +5,7 @@
 
 # Variables
 $ErrorActionPreference = "SilentlyContinue"
-$InvokePath="$pwd/$($args[0])"
+$InvokePath="$($args[0])"
 $Paramt=$($args[1])
 $Technique=$($args[2])
 $NoBanner=$($args[3])
