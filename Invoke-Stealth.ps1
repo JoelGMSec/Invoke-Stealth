@@ -36,8 +36,8 @@ Write-Host "       · " -NoNewLine ; Write-Host "All: "-ForegroundColor Green -N
 Write-Host ; Write-Host " Warning: " -ForegroundColor Red -NoNewLine  ; Write-Host "The output script will exponentially multiply the original size"
 Write-Host "         " -NoNewLine ; Write-Host " Chimera & PyFuscation need dependencies to work properly in Windows" ; Write-Host }
 
-if($NoBanner -notlike '*-nobanner') { Show-Banner }
-if($InvokePath -like '*-h*') { Show-Help ; break }
+if(!$ScriptPath) { $InvokePath = "$pwd/$($args[0])" }
+if($NoBanner -notlike '*-nobanner') { Show-Banner } ; if($InvokePath -like '*-h*') { Show-Help ; break }
 if(!$args) { Write-Host ; Write-Host " Error: No input file!" -ForegroundColor Red ; Show-Help ; break }
 if($Paramt -notlike '-t*') { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
 if(!$Technique) { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
