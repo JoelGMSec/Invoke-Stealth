@@ -8,15 +8,18 @@ $ErrorActionPreference = "SilentlyContinue"
 $InvokePath="$pwd/$($args[0])"
 $Paramt=$($args[1])
 $Technique=$($args[2])
+$NoBanner=$($args[3])
 
 # Banner
+function Show-Banner {
+Write-Host
 Write-host "  ___                 _             ____  _             _ _   _      " -ForegroundColor Blue
 Write-host " |_ _|_ _ __   _ ___ | | _ ___     / ___|| |_ ___  __ _| | |_| |__   " -ForegroundColor Blue
 Write-host "  | || '_ \ \ / / _ \| |/ / _ \____\___ \| __/ _ \/ _' | | __| '_ \  " -ForegroundColor Blue
 Write-host "  | || | | \ V / (_) |   <  __/_____|__) | ||  __/ (_| | | |_| | | | " -ForegroundColor Blue
 Write-host " |___|_| |_|\_/ \___/|_|\_\___|    |____/ \__\___|\__,_|_|\__|_| |_| " -ForegroundColor Blue
 Write-host
-Write-host "  ------------------------- by @JoelGMSec -------------------------  " -ForegroundColor Green
+Write-host "  ------------------------- by @JoelGMSec -------------------------  " -ForegroundColor Green }
 
 # Help
 function Show-Help {
@@ -33,10 +36,11 @@ Write-Host "       · " -NoNewLine ; Write-Host "All: "-ForegroundColor Green -N
 Write-Host ; Write-Host " Warning: " -ForegroundColor Red -NoNewLine  ; Write-Host "The output script will exponentially multiply the original size"
 Write-Host "         " -NoNewLine ; Write-Host " Chimera & PyFuscation need dependencies to work properly in Windows" ; Write-Host }
 
+if($NoBanner -notlike '*-nobanner') { Show-Banner }
 if($InvokePath -like '*-h*') { Show-Help ; break }
-if(!$args) { Write-Host ; Write-Host "Error: No input file!" -ForegroundColor Red ; Show-Help ; break }
-if($Paramt -notlike '-t*') { Write-Host ; Write-Host "Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
-if(!$Technique) { Write-Host ; Write-Host "Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
+if(!$args) { Write-Host ; Write-Host " Error: No input file!" -ForegroundColor Red ; Show-Help ; break }
+if($Paramt -notlike '-t*') { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
+if(!$Technique) { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
 
 # Main
 Write-host ; $RandomNumber = Get-Random (10..25)
