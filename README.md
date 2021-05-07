@@ -33,12 +33,12 @@ powershell iwr -useb https://darkbyte.net/invoke-stealth.php -outfile Invoke-Ste
 Info:  This tool helps you to automate the obfuscation process of
        any script written in PowerShell with different techniques
 
-Usage: .\Invoke-Stealth.ps1 script.ps1 -technique Xencrypt
+Usage: .\Invoke-Stealth.ps1 script.ps1 -technique Chimera
          - You can use as single or separated by commas -
 
 Techniques:
        · Chimera: Substitute strings and concatenate variables
-       · Xencrypt: Compresses and encrypts with random iterations
+       · BetterXencrypt: Compresses and encrypts with random iterations
        · PyFuscation: Obfuscate functions, variables and parameters
        · PSObfuscation: Convert content to bytes and encode with Gzip
        · ReverseB64: Encode with base64 and reverse it to avoid detections
