@@ -38,9 +38,8 @@ Write-Host "         " -NoNewLine ; Write-Host " Chimera & PyFuscation need depe
 
 if(!$ScriptPath) { $InvokePath = "$pwd/$($args[0])" }
 if($NoBanner -notlike '*-nobanner') { Show-Banner } ; if($InvokePath -like '*-h*') { Show-Help ; break }
-if(!$args) { Write-Host ; Write-Host " Error: No input file!" -ForegroundColor Red ; Show-Help ; break }
-if($Paramt -notlike '-t*') { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
-if(!$Technique) { Write-Host ; Write-Host " Error: Not enough parameters!" -ForegroundColor Red ; Show-Help ; break }
+f($Paramt -notlike '-t*') { Show-Help ; Write-Host "[!] Error: Not enough parameters!" -ForegroundColor Red ; Write-Host ; break }
+if(!$Technique) { Show-Help ; Write-Host "[!] Error: Not enough parameters!" -ForegroundColor Red ; Write-Host ; break }
 
 # Main
 Write-host ; $RandomNumber = Get-Random (10..25)
@@ -58,14 +57,13 @@ function Load-Chimera {
 $TestChimera = Test-Command bash ; if($TestChimera -in 'True'){ 
 Write-Host "[+] Loading Chimera and doing some obfuscation.. " -ForegroundColor Blue -NoNewline
 bash ./Resources/Chimera/Chimera.sh -z -q -f $InvokePath -l 5 -v -t -c -i -p -h -s -b -j -k -e 2>&1> $null
-$Chimera = ls *chimera* ; Clear-Content $InvokePath ; Add-Content $InvokePath $(Get-Content $Chimera)
-del $Chimera -ErrorAction SilentlyContinue ; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
-else { Write-Host "[!] Bash is not installed! Chimera will not load due to failed dependencies.." -ForegroundColor Red ; Write-Host }}
+$Chimera = ls *chimera* 2> $null ; Clear-Content $InvokePath ; Add-Content $InvokePath $(Get-Content $Chimera)
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del $Chimera -ErrorAction SilentlyContinue }}
 
 function Load-BetterXencrypt {
 Write-Host "[+] Loading BetterXencrypt and doing some encryption with $RandomNumber iterations.. " -ForegroundColor Blue -NoNewline
 if ($local){ Import-Module $pwd\Resources\BetterXencrypt\BetterXencrypt.ps1 -Force } else {
-(New-object System.net.webclient).DownloadFile("https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Resources/BetterXencrypt/BetterXencrypt.ps1","$pwd/BetterXencrypt.ps1")
+(New-object System.net.webclient).DownloadFile("https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/main/Resources/BetterXencrypt/BetterXencrypt.ps1","$pwd/BetterXencrypt.ps1")
 Import-Module $pwd\BetterXencrypt.ps1 -Force } ; Invoke-BetterXencrypt -InFile $InvokePath -OutFile $InvokePath -Iterations $RandomNumber 2>&1> $null
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del BetterXencrypt.ps1 -ErrorAction SilentlyContinue }
 
@@ -73,35 +71,32 @@ function Load-PyFuscation {
 $TestPyFuscation = Test-Command python3 ; if($TestPyFuscation -in 'True'){ 
 if($Technique -like '*Chimera*' -or '*all*') { $some = 'more' } else { $some = 'some' }
 Write-Host "[+] Loading PyFuscation and doing $some obfuscation.. " -ForegroundColor Blue -NoNewline
-python3 ./Resources/PyFuscation/PyFuscation.py -fvp --ps $InvokePath 2>&1> $null
-$PyFuscation = "$pwd/Resources/PyFuscation/tmp/script.ps1" ; Clear-Content $InvokePath ; Add-Content $InvokePath $(Get-Content $PyFuscation)
-del "$pwd/Resources/PyFuscation/tmp" -R -Force -ErrorAction SilentlyContinue ; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
-else { Write-Host "[!] Python3 is not installed! PyFuscation will not load due to failed dependencies.." -ForegroundColor Red ; Write-Host }}
-
-function Load-PSObfuscation {
-if($Technique -notin 'PSObfuscation') { Write-Host "[!] PSObfuscation will not load due to problems with another modules.." -ForegroundColor Red ; Write-Host } else {
-Write-Host "[+] Loading PSObfuscation and doing some compression.. " -ForegroundColor Blue -NoNewline
-if ($local){ Import-Module $pwd\Resources\PSObfuscation\Invoke-PSObfuscation.ps1 -Force } else {
-Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Resources/PSObfuscation/Invoke-PSObfuscation.ps1')}
-$PSobfuscated = Invoke-PSObfuscation -Path $InvokePath ; $content = ($PSobfuscated).Replace('powershell -NoP -NonI -W Hidden -Exec Bypass -Enc ','')
-Clear-Content $InvokePath ; Add-Content $InvokePath '$pwshcode = ' -NoNewline ; Add-Content $InvokePath $content
-Add-Content $InvokePath '$pwshdecoded = [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String("$pwshcode"))'
-Add-Content $InvokePath 'Invoke-Expression $pwshdecoded'; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }}
+$PyExecution = python3 ./Resources/PyFuscation/PyFuscation.py -fvp --ps $InvokePath 2> $null ; if($PyExecution) {
+$PyFuscation = "$pwd/Resources/PyFuscation/tmp/script.ps1" ; Clear-Content $InvokePath ; Add-Content $InvokePath $(Get-Content $PyFuscation -ErrorAction SilentlyContinue)}
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del "$pwd/Resources/PyFuscation/tmp" -R -Force -ErrorAction SilentlyContinue }}
 
 function Rev64-Encoder {
 Write-Host "[+] Encoding with base64 and reverse it to avoid detections.. " -ForegroundColor Blue -NoNewline
 $base64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($InvokePath)) ; $b64 = "`"$base64`""
 $base64rev = $b64.ToCharArray() ; [array]::Reverse($base64rev) ; $best64 = -join $base64rev | out-file $InvokePath
-$content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $InvokePath '$best64code = ' -NoNewline ; Add-Content $InvokePath $content
-Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; -join $base64 2>&1> $null'
-Add-Content $InvokePath '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64"))'
-Add-Content $InvokePath 'Invoke-Expression $LoadCode' ; Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
+$content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $InvokePath '$best64code = ' -NoNewline ; Add-Content $InvokePath "$content ;"
+Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; -join $base64 2>&1> $null ;'
+Add-Content $InvokePath '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64")) ;'
+Add-Content $InvokePath '$pwn = "iN"+"vo"+"Ke"+"-"+"eX"+"Press"+"ioN" ; New-Alias -name pwn -Value $pwn -Force ; pwn $LoadCode ;'
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
+
+function Load-PSObfuscation {
+if($Technique -like '*PSObfuscation*' -or '*all*') { Write-Host "[+] Loading PSObfuscation and randomizing script.. " -ForegroundColor Blue -NoNewline
+if ($local){ Import-Module $pwd\Resources\PSObfuscation\Invoke-PSObfuscation.ps1 -Force } else {
+Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/master/Resources/PSObfuscation/Invoke-PSObfuscation.ps1')}
+$PSobfuscated = Invoke-PSObfuscation -Path $InvokePath -Comments -Variables -OutFile $InvokePath
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host }}
 
 if($Technique -like '*Chimera*') { Load-Chimera }
 if($Technique -like '*BetterXencrypt*') { Load-BetterXencrypt }
 if($Technique -like '*PyFuscation*') { Load-PyFuscation }
-if($Technique -like '*PSObfuscation*') { Load-PSObfuscation }
 if($Technique -like '*ReverseB64*') { Rev64-Encoder }
-if($Technique -in 'All') { Load-Chimera ; Load-BetterXencrypt ; Load-PyFuscation ; Load-PSObfuscation ; Rev64-Encoder }
+if($Technique -like '*PSObfuscation*') { Load-PSObfuscation }
 
+if($Technique -in 'All') { Load-Chimera ; Load-BetterXencrypt ; Load-PyFuscation ; Rev64-Encoder ; Load-PSObfuscation }
 if($NoBanner -notlike '*-nobanner') { Write-Host "[+] Done! " -ForegroundColor Green ; Write-Host }
