@@ -58,7 +58,7 @@ $Chameleon = python3 ./Resources/Chameleon/chameleon.py -a $InvokePath -o $Invok
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del function_mapping.json -ErrorAction SilentlyContinue }}
 
 function Load-BetterXencrypt {
-if($NoBanner -notlike '*-nobanner') {
+if($NoBanner -like '*-nobanner') { Write-Host } else {
 if($Technique -in 'All') { Write-Host "[!] Avoid mixing BetterXencrypt with another techniques.. " -ForegroundColor Red -NoNewline }
 else { Write-Host "[+] Loading BetterXencrypt and doing some encryption with random iterations.. " -ForegroundColor Blue -NoNewline
 if ($local){ Import-Module $pwd\Resources\BetterXencrypt\BetterXencrypt.ps1 -Force } else {
