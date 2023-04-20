@@ -58,12 +58,13 @@ $Chameleon = python3 ./Resources/Chameleon/chameleon.py -a $InvokePath -o $Invok
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del function_mapping.json -ErrorAction SilentlyContinue }}
 
 function Load-BetterXencrypt {
+if($NoBanner -notlike '*-nobanner') {
 if($Technique -in 'All') { Write-Host "[!] Avoid mixing BetterXencrypt with another techniques.. " -ForegroundColor Red -NoNewline }
 else { Write-Host "[+] Loading BetterXencrypt and doing some encryption with random iterations.. " -ForegroundColor Blue -NoNewline
 if ($local){ Import-Module $pwd\Resources\BetterXencrypt\BetterXencrypt.ps1 -Force } else {
 (New-object System.net.webclient).DownloadFile("https://raw.githubusercontent.com/JoelGMSec/Invoke-Stealth/main/Resources/BetterXencrypt/BetterXencrypt.ps1","$pwd/BetterXencrypt.ps1")
 Import-Module $pwd\BetterXencrypt.ps1 -Force } ; Invoke-BetterXencrypt -InFile $InvokePath -OutFile $InvokePath -Iterations $RandomNumber 2>&1> $null }
-Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del BetterXencrypt.ps1 -ErrorAction SilentlyContinue }
+Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del BetterXencrypt.ps1 -ErrorAction SilentlyContinue }}
 
 function Load-PyFuscation {
 $TestPyFuscation = Test-Command python3 ; if ($TestPyFuscation -in 'True'){ 
