@@ -7,7 +7,6 @@ This tool helps you to automate the obfuscation process of any script written in
 
 # Requirements
 - Powershell 4.0 or higher
-- Bash*
 - Python 3*
 
 *Required to use all features
@@ -37,15 +36,15 @@ Usage: .\Invoke-Stealth.ps1 script.ps1 -technique Chimera
          - You can use as single or separated by commas -
 
 Techniques:
-       · Chimera: Substitute strings and concatenate variables
+       · Chameleon: Substitute strings and concatenate variables
        · BetterXencrypt: Compresses and encrypts with random iterations
        · PyFuscation: Obfuscate functions, variables and parameters
-       · PSObfuscation: Convert content to bytes and encode with Gzip
        · ReverseB64: Encode with base64 and reverse it to avoid detections
+       · PSObfuscation: Convert content to bytes and encode with Gzip
        · All: Sequentially executes all techniques described above
 
 Warning: The output script will exponentially multiply the original size
-         Chimera & PyFuscation need dependencies to work properly in Windows
+         Chameleon & PyFuscation need Python3 to work properly
 ```
 
 ### The detailed guide of use can be found at the following link:
@@ -62,7 +61,7 @@ This script has been created and designed from scratch by Joel Gámez Molina // 
 
 Some modules use third-party code, scripts, and tools, particularly:
 
-• **Chimera** by *tokyoneon* --> https://github.com/tokyoneon/Chimera
+• **Chameleon** by *klezVirus* --> https://github.com/klezVirus/chameleon
 
 • **BetterXencrypt** by *GetRektBoy724* --> https://github.com/GetRektBoy724/BetterXencrypt
 
