@@ -38,17 +38,17 @@ def realTimeMuxER(command):
 
 def removeJunk(oF):
     # general cleanup 
-    cmd = "sed -i -e \'/<#/,/#>/c\\\\\' " + oF
+    cmd = "sed -i -e \'/<#/,/#>/c\\\\\' " + "'" + oF + "'"
     realTimeMuxER(cmd)
-    cmd = "sed -i -e \'s/^[[:space:]]*#.*$//g\' " + oF
+    cmd = "sed -i -e \'s/^[[:space:]]*#.*$//g\' " + "'" + oF + "'"
     realTimeMuxER(cmd)
-    cmd = "sed -i \'/^$/d\' " + oF
+    cmd = "sed -i \'/^$/d\' " + "'" + oF + "'"
     realTimeMuxER(cmd)
 
 def useSED(DICT, oF):
     for var in DICT:
         new = str(DICT.get(var))
-        cmd = "sed -i -e \'s/" + var +'\\b' + "/" + new + "/g\' " + oF
+        cmd = "sed -i -e \'s/" + var +'\\b' + "/" + new + "/g\' " + "'" + oF + "'"
         realTimeMuxER(cmd)
 
 def THEreplacER(DICT, iF, oF):
@@ -210,8 +210,7 @@ def main():
     iFile = args.script
 
     printR("Obfuscating: " + iFile)
-    ts = "tmp"
-    oDir = os.path.dirname(args.script) + "/Resources/PyFuscation/tmp"
+    oDir = os.getcwd() + "/Resources/PyFuscation/tmp" 
     os.mkdir( oDir );
     oFile = oDir + "/" + "script.ps1"
     vFile = oDir + "/" + "vFile.ps1"
@@ -243,7 +242,7 @@ def main():
 
         # Print the Functions
         print("")
-        printP("Obfuscated script located at  : " + oFile)
+        printP("Obfuscated Functions located  : " + fFile)
 
 if __name__ == "__main__":
     
