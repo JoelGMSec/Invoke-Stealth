@@ -35,7 +35,7 @@ Write-Host "       · " -NoNewLine ; Write-Host "ReverseB64: "-ForegroundColor G
 Write-Host "       · " -NoNewLine ; Write-Host "PSObfuscation: "-ForegroundColor Green -NoNewLine ; Write-Host "Convert content to bytes and compress with Gzip"
 Write-Host "       · " -NoNewLine ; Write-Host "All: "-ForegroundColor Green -NoNewLine ; Write-Host "Sequentially executes all techniques described above"
 Write-Host ; Write-Host " Warning: " -ForegroundColor Red -NoNewLine  ; Write-Host "The output script will exponentially multiply the original size"
-Write-Host "         " -NoNewLine ; Write-Host " Chameleon & PyFuscation need dependencies to work properly in Windows" ; Write-Host }
+Write-Host "         " -NoNewLine ; Write-Host " Chameleon & PyFuscation need dependencies to work properly" ; Write-Host }
 
 if($NoBanner -notlike '*-nobanner') { Show-Banner } ; if($InvokePath -like '*-h*') { Show-Help ; break }
 if(!$Technique) { Show-Help ; Write-Host "[!] Error: Not enough parameters!" -ForegroundColor Red ; Write-Host ; break }
