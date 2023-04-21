@@ -80,8 +80,11 @@ $base64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($InvokePath)) ; $b64
 $base64rev = $b64.ToCharArray() ; [array]::Reverse($base64rev) ; $best64 = -join $base64rev | out-file $InvokePath
 $content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $InvokePath '$best64code = ' -NoNewline ; Add-Content $InvokePath "$content ;"
 Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; -join $base64 2>&1> $null ;'
-Add-Content $InvokePath '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64")) ;'
-Add-Content $InvokePath '$pwn = "iN"+"vo"+"Ke"+"-"+"eX"+"Press"+"ioN" ; New-Alias -name pwn -Value $pwn -Force ; pwn $LoadCode ;'
+$RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64")) ;'
+$RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
+$RandomIEX = (("iN"+"voK"+"e"+"-"+"eXP"+"re"+"sSi"+"oN" -split "(.{$(Get-Random(1..3))})" -ne "" | % { '"' + $_ + '"' + "+" }) -join "").toString().trimend("+")
+$RandomCode = '$pwn = ' + $RandomIEX + ' ; New-Alias -name pwn -Value $pwn -Force ; pwn $LoadCode ;'
+$RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
 
 function Load-PSObfuscation {
