@@ -76,11 +76,12 @@ Write-Host "[OK]" -ForegroundColor Green ; Write-Host ; del "$pwd/Resources/PyFu
 
 function Rev64-Encoder {
 Write-Host "[+] Encoding with base64 and reverse it to avoid detections.. " -ForegroundColor Blue -NoNewline
-$base64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($InvokePath)) ; $b64 = "`"$base64`""
-$base64rev = $b64.ToCharArray() ; [array]::Reverse($base64rev) ; $best64 = -join $base64rev | out-file $InvokePath
+$base64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($InvokePath)) -replace "=","" ; $b64 = "`"$base64`""
+$base64rev = $b64.ToCharArray() ; [array]::Reverse($base64rev) ; $best64 = -join $base64rev | Out-File $InvokePath
 $content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $InvokePath '$best64code = ' -NoNewline ; Add-Content $InvokePath "$content ;"
-Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; -join $base64 2>&1> $null ;'
-$RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64")) ;'
+Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; $Stripped = -join $base64 ;'
+Add-Content $InvokePath '$Padded = switch ($Stripped.Length % 4) { 0 { $Stripped }; 1 { $Stripped.Substring(0, $Stripped.Length - 1) }; 2 { $Stripped + ("=" * 2) }; 3 { $Stripped + "=" }} ;'
+$RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Padded)) ;'
 $RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
 $RandomSTR = "Invoke-Expression"; $RandomSTR2Parts = @(); $currentIndex = 0; while ($currentIndex -lt $RandomSTR.Length) { 
 $remainingLength = $RandomSTR.Length - $currentIndex; $chunkSize = Get-Random -Minimum 1 -Maximum ([System.Math]::Min(3, $remainingLength) + 1);
