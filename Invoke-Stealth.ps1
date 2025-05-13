@@ -81,15 +81,25 @@ $base64rev = $b64.ToCharArray() ; [array]::Reverse($base64rev) ; $best64 = -join
 $content = Get-Content $InvokePath ; Clear-Content $InvokePath ; Add-Content $InvokePath '$best64code = ' -NoNewline ; Add-Content $InvokePath "$content ;"
 Add-Content $InvokePath '$base64 = $best64code.ToCharArray() ; [array]::Reverse($base64) ; $Stripped = -join $base64 ;'
 Add-Content $InvokePath '$Padded = switch ($Stripped.Length % 4) { 0 { $Stripped }; 1 { $Stripped.Substring(0, $Stripped.Length - 1) }; 2 { $Stripped + ("=" * 2) }; 3 { $Stripped + "=" }} ;'
-$RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Padded)) ;'
-$RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
-$RandomSTR = "Invoke-Expression"; $RandomSTR2Parts = @(); $currentIndex = 0; while ($currentIndex -lt $RandomSTR.Length) { 
+$RandomCode = '$LoadCode = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Padded)) ;' ; Add-Content $InvokePath $RandomCode
+$RandomSTR = "Invoke-Expression"; $RandomSTR2Parts = @(); $currentIndex = 0; while ($currentIndex -lt $RandomSTR.Length) {
 $remainingLength = $RandomSTR.Length - $currentIndex; $chunkSize = Get-Random -Minimum 1 -Maximum ([System.Math]::Min(3, $remainingLength) + 1);
-$chunk = $RandomSTR.Substring($currentIndex, $chunkSize); $randomCasedChunk = ($chunk.ToCharArray() | ForEach-Object { 
+$chunk = $RandomSTR.Substring($currentIndex, $chunkSize); $randomCasedChunk = ($chunk.ToCharArray() | ForEach-Object {
 if (Get-Random -Maximum 2) {$_.ToString().ToLower()} else {$_.ToString().ToUpper()}}) -join '';
-$RandomSTR2Parts += "`"$randomCasedChunk`""; $currentIndex += $chunkSize }; $RandomSTR = $RandomSTR2Parts -join "+"; 
-$RandomCode = '$pwn = ' + $RandomSTR[-1..-99] + ' ; New-Alias -name pwn -Value ($pwn[-1..-99] -join "" -replace " ") -Force ; pwn $LoadCode ;'
-$RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.toUpper()}else{$_.toLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
+$RandomSTR2Parts += $randomCasedChunk; $currentIndex += $chunkSize } ; $RandomSTR = $RandomSTR2Parts -join ""
+$RandomSTR64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($RandomSTR)) -replace "=",""
+$RandomSTR64 = $RandomSTR64.ToCharArray(); [array]::Reverse($RandomSTR64); $RandomSTR64 = -join $RandomSTR64
+Add-Content $InvokePath "`$RandomSTR64 = '$RandomSTR64'.ToCharArray() ; [array]::Reverse(`$RandomSTR64) ; `$iexbase64 = -join `$RandomSTR64 ;"
+Add-Content $InvokePath "`$iexbase64 = switch (`$iexbase64.Length % 4) { 0 { `$iexbase64 }; 1 { `$iexbase64.Substring(0, `$iexbase64.Length - 1) }; 2 { `$iexbase64 + '=' * 2 }; 3 { `$iexbase64 + '=' } } ;"
+Add-Content $InvokePath "`$iexcmd = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(`$iexbase64)) ;"
+$aliasName = -join ((48..57)+(97..122)+(65..90) | Get-Random -Count 4 | ForEach-Object {[char]$_})
+$aliasNameB64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($aliasName)) -replace "=",""
+$aliasNameB64 = $aliasNameB64.ToCharArray(); [array]::Reverse($aliasNameB64); $aliasNameB64 = -join $aliasNameB64
+Add-Content $InvokePath "`$aliasSTR64 = '$aliasNameB64'.ToCharArray() ; [array]::Reverse(`$aliasSTR64) ; `$aliasbase = -join `$aliasSTR64 ;"
+Add-Content $InvokePath "`$aliasbase = switch (`$aliasbase.Length % 4) { 0 { `$aliasbase }; 1 { `$aliasbase.Substring(0, `$aliasbase.Length - 1) }; 2 { `$aliasbase + '=' * 2 }; 3 { `$aliasbase + '=' } } ;"
+Add-Content $InvokePath "`$aliasFinal = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(`$aliasbase)) ;"
+$RandomCode = '$null = New-Alias -Name $aliasFinal -Value $iexcmd -Force ; & $aliasFinal $LoadCode ;'
+$RandomCode = ($RandomCode -split "" | %{if(@(0..1) | Get-Random){$_.ToUpper()}else{$_.ToLower()}}) -join "" ; Add-Content $InvokePath $RandomCode
 Write-Host "[OK]" -ForegroundColor Green ; Write-Host }
 
 function Load-PSObfuscation {
